@@ -1,6 +1,6 @@
 # Auxílio Brasil e voto em Lula em 2022
 
-Reprodução em R do trabalho de Bruno Donadel Mainieri e Enrico Bertolini Prado. [Artigo em PDF](Artigo_Econometria_corrigido.pdf) · [Conversa com a IA](https://econo-chat.vercel.app/).
+Reprodução em R do trabalho de Bruno Donadel Mainieri e Enrico Bertolini Prado. [Artigo em PDF](Artigo_Econometria_versao_definitiva.pdf) · [Conversa com a IA](https://econo-chat.vercel.app/conversa).
 
 ## Executar no RStudio
 
@@ -25,12 +25,14 @@ Para reproduzir os 9.999 sorteios do artigo nas três ponderações, o bootstrap
 | Item do artigo | Arquivos em `resultados/` |
 | --- | --- |
 | Tabela 1 e Figura 1 | `descritivas.csv` e `figura_descritiva.pdf` |
-| Tabela 2 | Linhas de peso igual em `progressao.csv` |
-| Tabela 3 e Figura 2 | `referencia.csv`, `contraste_quartis.csv` e `ajustes.pdf` |
-| Tabelas 4 e 5 e Figura 3 | `diagnosticos_referencia.csv`, `diagnosticos_centrais.csv`, `decis.csv`, `moran.csv` e `decis.pdf` |
-| Tabela 6 e Figura 4 | `progressao.csv`, `wild.csv` e `intervalos_m3.pdf` |
-| Contrastes e sensibilidades | `coeficientes_m5.csv`, `sensibilidades.csv`, `sem_uf.csv` e `vif.csv` |
-| Tabela 7 | `expansao.csv` |
+| Tabela 2, colunas (1) a (3) | Linhas com erro `UF` em `referencia.csv` |
+| Tabela 2, colunas (4) a (7): folha e Haddad 2018 | Linhas de peso igual em `progressao.csv` (`j` de 2 a 5; Haddad na coluna `gamma`) |
+| Figura 2 e contraste entre quartis | `ajustes.pdf` e `contraste_quartis.csv` |
+| Tabela 3 (Apêndice A): pesos, NIS, primeiro turno e diferença Lula − Haddad | Linhas com `j` = 3 (e `diferença`, com `j` = 2) em `progressao.csv` |
+| Tabela 3 (Apêndice A): amostras alternativas e terços de Haddad | `sensibilidades.csv` (`M` = 3) |
+| Tabela 3 (Apêndice A): sem uma UF por vez | `sem_uf.csv` (`M` = 3) |
+
+Os demais arquivos (`diagnosticos_referencia.csv`, `diagnosticos_centrais.csv`, `decis.csv`, `moran.csv`, `wild.csv`, `vif.csv`, `coeficientes_m5.csv`, `estimativas.csv`, `expansao.csv` e as figuras `decis.pdf`, `regioes.pdf` e `intervalos_m3.pdf`) vêm de análises de versões anteriores e não aparecem na versão definitiva do artigo. Eles continuam sendo gerados para que a conferência com `conferencia.rds` permaneça completa.
 
 ## Reconstrução opcional com microdados
 
