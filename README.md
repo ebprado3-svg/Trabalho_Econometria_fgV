@@ -1,40 +1,31 @@
 # Auxílio Brasil e voto em Lula em 2022
 
-Reprodução em R do trabalho de Bruno Donadel Mainieri e Enrico Bertolini Prado. [Artigo em PDF](Artigo_Econometria_versao_definitiva.pdf) · [Conversa com a IA](https://econo-chat.vercel.app/conversa).
+Reprodução em R do trabalho de Bruno Donadel Mainieri e Enrico Bertolini Prado. [Artigo em PDF](Artigo_Econometria_Vers%C3%A3oFinal.pdf) · [Conversa com a IA](https://econo-chat.vercel.app/conversa).
 
-## Executar no RStudio
+## Como executar
 
-Extraia o projeto e abra `Trabalho_Econometria.Rproj`. No console, execute:
+Abra `Trabalho_Econometria.Rproj` no RStudio e rode no console:
 
 ```r
 source("reproduzir.R", encoding = "UTF-8")
 ```
 
-Pelo terminal, use `Rscript reproduzir.R` na pasta do projeto. A análise foi testada com R 4.5.0. As rotinas que partem da base municipal usam apenas os pacotes que acompanham o R. O programa usa os dados municipais incluídos, recalcula as tabelas e os gráficos em `resultados/` e compara os números com as 14 tabelas de referência guardadas em `conferencia.rds`. Uma divergência interrompe a conferência e identifica a tabela e a coluna.
+Pelo terminal, use `Rscript reproduzir.R` na pasta do projeto. A reprodução usa a base municipal incluída e os pacotes que acompanham o R. O script carrega os testes de Breusch–Pagan e White de `diagnosticos.R`, gera as saídas em `resultados/` e compara seis tabelas com os valores de referência em `conferencia.rds`. A execução foi verificada com R 4.5.0.
 
-## Organização do projeto
+As regressões de referência usam 5.570 municípios. Os modelos complementares excluem o Distrito Federal e usam 5.569 municípios em 26 UFs. A inclinação da folha mede a diferença em pontos percentuais de votos válidos em Lula por dez famílias adicionais na folha por mil habitantes. Os erros-padrão da Tabela 2 são agrupados por UF.
 
-O PDF contém o artigo. A base reúne folha, votos, covariáveis, contagens de 2021 e coordenadas das sedes por código IBGE. O arquivo `reproduzir.R` gera as tabelas e figuras. Ele chama `diagnosticos.R` para os testes de influência, dependência espacial e bootstrap. Os insumos da conferência numérica e os sorteios do bootstrap acompanham o projeto. As saídas são criadas em `resultados/` na execução.
+## Onde encontrar os resultados
 
-As regressões de referência usam 5.570 municípios. Os modelos complementares usam 5.569 municípios em 26 UFs. A unidade da inclinação da folha é o ponto percentual de votos válidos em Lula por dez famílias adicionais na folha por mil habitantes. A tabela de referência inclui intervalos por UF, por região imediata e HC1. Nas comparações centrais, a rotina calcula CR1 por UF com referência t de 25 graus de liberdade.
-
-Para reproduzir os 9.999 sorteios do artigo nas três ponderações, o bootstrap em R lê a matriz de sinais em `sinais_bootstrap.csv.gz`. Cada linha do arquivo contém um sorteio e cada coluna identifica uma UF. A matriz registra os sinais de Rademacher do gerador usado na versão anterior (semente 202211). A rotina recalcula estatísticas e intervalos e verifica uma réplica por reestimação direta. Nos testes de Moran, as 999 permutações são geradas pelo próprio R com semente 202211.
-
-## Localizar as saídas
-
-| Item do artigo | Arquivos em `resultados/` |
+| Item do artigo | Saída em `resultados/` |
 | --- | --- |
 | Tabela 1 e Figura 1 | `descritivas.csv` e `figura_descritiva.pdf` |
-| Tabela 2, colunas (1) a (3) | Linhas com erro `UF` em `referencia.csv` |
-| Tabela 2, colunas (4) a (7): folha e Haddad 2018 | Linhas de peso igual em `progressao.csv` (`j` de 2 a 5; Haddad na coluna `gamma`) |
-| Figura 2 e contraste entre quartis | `ajustes.pdf` e `contraste_quartis.csv` |
-| Tabela 3 (Apêndice A): pesos, NIS, primeiro turno e diferença Lula − Haddad | Linhas com `j` = 3 (e `diferença`, com `j` = 2) em `progressao.csv` |
-| Tabela 3 (Apêndice A): amostras alternativas e terços de Haddad | `sensibilidades.csv` (`M` = 3) |
-| Tabela 3 (Apêndice A): sem uma UF por vez | `sem_uf.csv` (`M` = 3) |
+| Tabela 2, colunas (1) a (3) | Linhas com `erro = UF` em `referencia.csv`. O termo de renda nessa saída já incorpora a variação de 10% usada no texto. |
+| Tabela 2, colunas (4) a (7) | `tabela_2_complementar.csv` |
+| Seção 4.3, testes de Breusch–Pagan e White | `diagnosticos_referencia.csv`, com a estatística, os graus de liberdade e o valor de p |
+| Figura 2 e seção 5.2 | `ajustes.pdf`, `ajuste_reta.csv`, `ajuste_por_decil.csv` e `contraste_quartis.csv` |
+| Seções 5.3 e 5.4, comparações entre modelos e ponderações | `progressao.csv`. Os valores `j = 2, 3, 4, 5` correspondem às colunas (4), (5), (6) e (7) da Tabela 2. |
+| Tabela 3, Apêndice A | `progressao.csv` para pesos, NIS, primeiro turno e diferença Lula − Haddad. `sensibilidades.csv` para recortes da amostra e terços de Haddad. `sem_uf.csv` para a retirada de uma UF por vez. |
 
-Os demais arquivos (`diagnosticos_referencia.csv`, `diagnosticos_centrais.csv`, `decis.csv`, `moran.csv`, `wild.csv`, `vif.csv`, `coeficientes_m5.csv`, `estimativas.csv`, `expansao.csv` e as figuras `decis.pdf`, `regioes.pdf` e `intervalos_m3.pdf`) vêm de análises de versões anteriores e não aparecem na versão definitiva do artigo. Eles continuam sendo gerados para que a conferência com `conferencia.rds` permaneça completa.
+## Reconstrução opcional da base
 
-## Reconstrução opcional com microdados
-
-A base municipal integrada acompanha o projeto. Para reconstruí-la, use `reconstruir_base.R`. Essa rotina adicional requer `data.table`, `jsonlite` e `pdftools`, acesso às fontes e memória para ler os arquivos administrativos. Os nomes e as URLs estão em `fontes.json`. Para baixar os arquivos que faltam e reconstruir, rode `Rscript reconstruir_base.R --baixar`. Se os insumos já estiverem em `brutos/`, use `Rscript reconstruir_base.R`. Os dados reconstruídos ficam em `reconstruidos/`. A rotina verifica a soma da folha, as 2.458 divergências de média monetária, as 17 exceções de nome e os totais dos NIS. Os registros individuais são usados apenas localmente.
-
+`reconstruir_base.R` refaz a base municipal a partir das fontes de `fontes.json`. Essa etapa requer `data.table`, `jsonlite` e `pdftools`. Use `Rscript reconstruir_base.R --baixar` para baixar os insumos ou `Rscript reconstruir_base.R` se eles já estiverem em `brutos/`. A base reconstruída fica em `reconstruidos/`.
