@@ -83,12 +83,27 @@ for (j in seq_along(equacoes)) {
     }
   }
   z <- resid(m)-mean(resid(m))
-  aux <- lm.fit(m$x, resid(m)^2)
-  LM <- a$n*(1-sum(aux$residuals^2)/sum((resid(m)^2-mean(resid(m)^2))^2))
+  # Breusch–Pagan clássico: metade da soma explicada na regressão
+  # dos resíduos quadráticos normalizados pela variância estimada sob H0.
+  e2 <- resid(m)^2
+  bp_aux <- lm.fit(m$x, e2 / mean(e2))
+  bp_lm <- sum((bp_aux$fitted.values - 1)^2) / 2
+  bp_gl <- bp_aux$rank - 1L
+
+  # White completo: termos lineares, quadrados e produtos cruzados.
+  X <- m$x[, -1, drop = FALSE]
+  produtos <- do.call(cbind, lapply(seq_len(ncol(X)), function(k) {
+    X[, k] * X[, k:ncol(X), drop = FALSE]
+  }))
+  white_aux <- lm.fit(cbind(m$x, produtos), e2)
+  white_lm <- a$n * (1 - sum(white_aux$residuals^2) / sum((e2 - mean(e2))^2))
+  white_gl <- white_aux$rank - 1L
   dec <- tapply(z,faixas(base$F,10),mean)
   covars <- m$x[,-1,drop=FALSE]
-  diags[[j]] <- data.frame(eq=j,moran=indice_rgi(z),p_perm=p_moran(z,indice_rgi), LM,
-    p_koenker=pchisq(LM,ncol(covars),lower.tail=FALSE),acima_100=sum(fitted(m)>100),
+  diags[[j]] <- data.frame(eq=j,moran=indice_rgi(z),p_perm=p_moran(z,indice_rgi),
+    bp_lm, bp_gl, bp_p=pchisq(bp_lm,bp_gl,lower.tail=FALSE),
+    white_lm, white_gl, white_p=pchisq(white_lm,white_gl,lower.tail=FALSE),
+    acima_100=sum(fitted(m)>100),
     decis_acima5=sum(abs(dec)>5),max_decil=max(abs(dec)),cook=sum(cooks.distance(m)>4/a$n),
     vif=max(diag(solve(cor(covars)))))
 }
